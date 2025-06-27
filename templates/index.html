@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/index.css" />
+    <title>C-AIR</title>
+    <!-- index.html - C-AIR 웹사이트 메인 홈페이지 -->
+  </head>
+
+  <body>
+    <!-- Header Area -->
+    <header>
+      <nav>
+        <div class="main-logo">
+          <img src="/static/assets/logos/logo-main.png" alt="C-AIR Logo" />
+        </div>
+
+        <ul class="nav-menu">
+          <li class="nav-menu-item cta"><a href="{{ url_for('main.search_page') }}">예약</a></li>
+          <li class="nav-menu-item cta"><a href="{{ url_for('main.history_search_page') }}">예약 내역 조회</a></li>
+          <li class="nav-menu-item user"><a href="{{ url_for('main.login_page') }}">로그인</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+      <!-- Hero Section -->
+      <section id="hero">
+        <div class="hero-image-wrapper">
+          <img src="/static/assets/images/image-main-airplane.png" class="hero-image" alt="Airplane" />
+        </div>
+      </section>
+
+      <!-- Quick Search Section -->
+      <section id="quick-search">
+        <div class="quick-search-title">빠른 검색</div>
+
+        <form class="quick-search-form" action="/api/search" method="GET">
+          <div class="btn-quick-search">
+            <input type="date" name="departure_date" class="date" placeholder="출발날짜" required />
+          </div>
+
+          <div class="btn-quick-search">
+            <input type="text" name="departure_airport" class="departure-airport" placeholder="출발공항" required />
+            <img
+              src="/static/assets/icons/icon-flight-takeoff.svg"
+              alt="Departure Airplane Icon"
+              class="input-icon"
+            />
+          </div>
+
+          <div class="btn-quick-search">
+            <input type="text" name="arrival_airport" class="arrival-airport" placeholder="도착공항" required />
+            <img src="/static/assets/icons/icon-flight-land.svg" alt="Arrival Airplane Icon" class="input-icon" />
+          </div>
+
+          <div class="btn-quick-search">
+            <input type="text" name="seat_class" class="seat-class" placeholder="좌석등급" required />
+            <img src="/static/assets/icons/icon-seat.svg" alt="Seat Icon" class="input-icon" />
+          </div>
+
+          <button type="submit" class="btn-submit">
+            <img src="/static/assets/icons/icon-search.svg" alt="Search Icon" class="search-icon" />
+          </button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/statistics.css" />
+    <title>C-AIR</title>
+    <!-- statistics.html - C-AIR 웹사이트 관리자 전용 통계 페이지 -->
+  </head>
+
+  <body>
+    <!-- Header Area -->
+    <header>
+      <nav>
+        <div class="main-logo">
+          <img src="/static/assets/logos/logo-main.png" alt="C-AIR Logo" />
+        </div>
+
+        <ul class="nav-menu">
+          <li class="nav-menu-item cta"><a href="{{ url_for('main.search_page') }}">예약</a></li>
+          <li class="nav-menu-item cta"><a href="{{ url_for('main.history_search_page') }}" class="active">예약 내역 조회</a></li>
+          {% if session.user_role == 'admin' %}
+          <li class="nav-menu-item"><a href="{{ url_for('main.statistics_page') }}">통계</a></li>
+          {% endif %}
+          {% if session.user_cno %}
+          <li class="nav-user-info">{{ session.user_name }}님 안녕하세요!</li>
+          <li class="nav-menu-item user"><a href="{{ url_for('api.logout') }}">로그아웃</a></li>
+          {% else %}
+          <li class="nav-menu-item user"><a href="{{ url_for('main.login_page') }}">로그인</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+      <!-- Statistics Section -->
+      <section id="statistics">
+        <div class="statistics-title-section">
+          <div class="statistics-title">통계 확인</div>
+        </div>
+        <div class="statistics-container">
+          <aside class="statistics-sidebar">
+            <div class="sidebar-title">통계 항목</div>
+            <ul class="sidebar-list">
+              <li class="active">Group 01</li>
+              <li>Group 02</li>
+              <li>Window 01</li>
+              <li>Window 02</li>
+            </ul>
+          </aside>
+          <div class="statistics-content">
+            <div class="statistics-content-title">운항편별 총 예약 금액 및 평균 예약 금액</div>
+            <div class="statistics-info"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </body>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const sidebarItems = document.querySelectorAll('.sidebar-list li');
+      const statTitle = document.querySelector('.statistics-content-title');
+      const statInfo = document.querySelector('.statistics-info');
+      const statTitles = [
+        '운항편별 총 예약 금액 및 평균 예약 금액',
+        '고객별 총 취소 환불액 및 최대 환불액',
+        '항공편별 누적 예약 금액 및 예약 금액 순위',
+        '고객별 총 예약 금액 순위'
+      ];
+      const statTypes = ['group01', 'group02', 'window01', 'window02'];
+      // 통계 타입별 컬럼 순서 지정
+      const columnsByType = {
+        group01: ["flight_number", "departure_date_time", "reservation_count", "total_amount", "avg_amount"],
+        group02: ["cno", "name", "cancel_count", "total_refund", "max_refund"],
+        window01: ["flight_number", "departure_date_time", "cumulative_amount", "amount", "amount_rank"],
+        window02: ["cno", "name", "total_amount", "total_rank"]
+      };
+
+      sidebarItems.forEach((item, idx) => {
+        item.addEventListener('click', function() {
+          // active 클래스 처리
+          sidebarItems.forEach(i => i.classList.remove('active'));
+          item.classList.add('active');
+          // 타이틀 변경
+          statTitle.textContent = statTitles[idx];
+          // 데이터 요청
+          fetch(`/statistics/data?type=${statTypes[idx]}`)
+            .then(res => res.json())
+            .then(data => {
+              // 표 생성
+              let html = '';
+              const columns = columnsByType[statTypes[idx]];
+              if(data.table && data.table.length > 0) {
+                html += '<table style="width:100%;border-collapse:collapse;background:white;margin-bottom:24px;">';
+                html += '<thead><tr>';
+                columns.forEach(key => {
+                  html += `<th style='border:1px solid #ccc;padding:8px;background:#eee;'>${key}</th>`;
+                });
+                html += '</tr></thead><tbody>';
+                data.table.forEach(row => {
+                  html += '<tr>';
+                  columns.forEach(key => {
+                    let val = row[key];
+                    if (val === undefined || val === null) val = '';
+                    html += `<td style='border:1px solid #ccc;padding:8px;'>${val}</td>`;
+                  });
+                  html += '</tr>';
+                });
+                html += '</tbody></table>';
+              }
+              // 차트 이미지
+              if(data.chart) {
+                html += `<img src="data:image/png;base64,${data.chart}" style="max-width:100%;border:2px solid #f26d4f;box-shadow:0 2px 8px #aaa;margin-top:32px;" alt="통계 차트"/>`;
+              }
+              statInfo.innerHTML = html;
+            });
+        });
+      });
+      // 첫 항목 자동 클릭
+      sidebarItems[0].click();
+    });
+  </script>
+</html>

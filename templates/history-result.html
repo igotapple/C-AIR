@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/history-result.css" />
+    <title>C-AIR</title>
+    <!-- history-result.html - C-AIR 웹사이트 예약 및 취소 내역 조회 결과 페이지 -->
+  </head>
+
+  <body>
+    <!-- Header Area -->
+    <header>
+      <nav>
+        <div class="main-logo">
+          <img src="/static/assets/logos/logo-main.png" alt="C-AIR Logo" />
+        </div>
+
+        <ul class="nav-menu">
+          <li class="nav-menu-item cta"><a href="{{ url_for('main.search_page') }}">예약</a></li>
+          <li class="nav-menu-item cta"><a href="{{ url_for('main.history_search_page') }}">예약 내역 조회</a></li>
+          {% if session.user_role == 'admin' %}
+          <li class="nav-menu-item"><a href="{{ url_for('main.statistics_page') }}">통계</a></li>
+          {% endif %}
+          {% if session.user_cno %}
+          <li class="nav-user-info">{{ session.user_name }}님 안녕하세요!</li>
+          <li class="nav-menu-item user"><a href="{{ url_for('api.logout') }}">로그아웃</a></li>
+          {% else %}
+          <li class="nav-menu-item user"><a href="{{ url_for('main.login_page') }}">로그인</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+      <!-- Hero Section -->
+      <section id="hero">
+        <div class="hero-image-wrapper">
+          <img src="/static/assets/images/image-travel.jpg" class="hero-image" alt="Airplane" />
+        </div>
+      </section>
+
+      <!-- History Result Section -->
+      <section id="history-result">
+        <div class="history-result-title-section">
+          <div class="history-result-title">예약 및 취소 내역 조회</div>
+        </div>
+
+        {% if reservations or cancellations %}
+          <div class="history-info-section">
+            <span>구분</span>
+            <span>출발날짜시간</span>
+            <span>출발공항</span>
+            <span>도착날짜시간</span>
+            <span>도착공항</span>
+            <span>운항편명 항공사</span>
+            <span>좌석등급</span>
+            <span>결제금액 환불금액</span>
+            <span>예약날짜 취소날짜</span>
+          </div>
+
+          <div class="item-section">
+            {% if reservations %}
+              {% for reservation in reservations %}
+              {% if reservation.departure_date_time > now %}
+              <div class="item clickable" onclick="cancelReservation('{{ reservation.flight_number }}', '{{ reservation.departure_date_time.isoformat() }}', '{{ reservation.seat_class }}')">
+              {% else %}
+              <div class="item non-clickable">
+              {% endif %}
+                <span class='reservation-black'>예약</span>
+                <span{% if reservation.departure_date_time <= now %} class="departed-orange"{% endif %}>{{ reservation.departure_date_time.strftime('%m/%d/%a %H:%M') }}</span>
+                <span>{{ reservation.airplane.departure_airport }}</span>
+                <span>{{ reservation.airplane.arrival_date_time.strftime('%m/%d/%a %H:%M') }}</span>
+                <span>{{ reservation.airplane.arrival_airport }}</span>
+                <span>{{ reservation.flight_number }} {{ reservation.airplane.airline }}</span>
+                <span>{{ reservation.seat_class }}</span>
+                <span>{{ "{:,}".format(reservation.payment) }}원</span>
+                <span>{{ reservation.reserve_date_time.strftime('%m/%d/%a %H:%M') }}</span>
+              </div>
+              {% endfor %}
+            {% endif %}
+
+            {% if cancellations %}
+              {% for cancellation in cancellations %}
+              <div class="item non-clickable">
+                <span class="cancel-red">취소</span>
+                <span>{{ cancellation.departure_date_time.strftime('%m/%d/%a %H:%M') }}</span>
+                <span>{{ cancellation.airplane.departure_airport }}</span>
+                <span>{{ cancellation.airplane.arrival_date_time.strftime('%m/%d/%a %H:%M') }}</span>
+                <span>{{ cancellation.airplane.arrival_airport }}</span>
+                <span>{{ cancellation.flight_number }} {{ cancellation.airplane.airline }}</span>
+                <span>{{ cancellation.seat_class }}</span>
+                <span>{{ "{:,}".format(cancellation.refund) }}원</span>
+                <span>{{ cancellation.cancel_date_time.strftime('%m/%d/%a %H:%M') }}</span>
+              </div>
+              {% endfor %}
+            {% endif %}
+          </div>
+        {% else %}
+          <div class="no-results">
+            <p>조회 조건에 맞는 내역이 없습니다.</p>
+          </div>
+        {% endif %}
+      </section>
+      <button class="btn-floating" onclick="goBack()">
+        <img src="/static/assets/icons/icon-arrow-left.svg" />
+      </button>
+    </main>
+
+    <script>
+      function cancelReservation(flightNumber, departureDateTime, seatClass) {
+        if (confirm('이 예약을 취소하시겠습니까?\n\n취소 시 수수료가 적용되어 환불 금액이 차감됩니다.')) {
+          fetch('/api/cancel-reservation', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              flight_number: flightNumber,
+              departure_date_time: departureDateTime,
+              seat_class: seatClass
+            })
+          })
+          .then(response => response.json())
+          .then(data => {
+            if (data.success) {
+              alert(data.message);
+              location.reload();
+            } else {
+              alert('취소 실패: ' + data.message);
+            }
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('취소 중 오류가 발생했습니다.');
+          });
+        }
+      }
+
+      function goBack() {
+        window.history.back();
+      }
+    </script>
+  </body>
+</html>

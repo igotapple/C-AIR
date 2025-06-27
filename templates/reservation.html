@@ -1,0 +1,181 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/reservation.css" />
+    <title>C-AIR</title>
+    <!-- reservation.html - C-AIR 웹사이트 예약 페이지 -->
+  </head>
+
+  <body>
+    <!-- Header Area -->
+    <header>
+      <nav>
+        <div class="main-logo">
+          <img src="/static/assets/logos/logo-main.png" alt="C-AIR Logo" />
+        </div>
+
+        <ul class="nav-menu">
+          <li class="nav-menu-item cta"><a href="{{ url_for('main.search_page') }}">예약</a></li>
+          <li class="nav-menu-item cta"><a href="{{ url_for('main.history_search_page') }}" class="active">예약 내역 조회</a></li>
+          {% if session.user_role == 'admin' %}
+          <li class="nav-menu-item"><a href="{{ url_for('main.statistics_page') }}">통계</a></li>
+          {% endif %}
+          {% if session.user_cno %}
+          <li class="nav-user-info">{{ session.user_name }}님 안녕하세요!</li>
+          <li class="nav-menu-item user"><a href="{{ url_for('api.logout') }}">로그아웃</a></li>
+          {% else %}
+          <li class="nav-menu-item user"><a href="{{ url_for('main.login_page') }}">로그인</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+      <!-- Hero Section -->
+      <section id="hero">
+        <div class="hero-image-wrapper">
+          <img src="/static/assets/images/image-travel.jpg" class="hero-image" alt="Airplane" />
+        </div>
+      </section>
+
+      <!-- Reservation Section -->
+      <section id="reservation">
+        <div class="reservation-title-section">
+          <div class="reservation-title">여객 시간표</div>
+          <div class="sort-buttons">
+            <button class="sort-btn" data-sort="time">
+              시간순
+              <img src="/static/assets/icons/icon-arrow-down-black.svg" class="sort-icon" />
+            </button>
+            <button class="sort-btn asc" data-sort="price">
+              요금순
+              <img src="/static/assets/icons/icon-arrow-down-black.svg" class="sort-icon" />
+            </button>
+          </div>
+        </div>
+
+        <div class="reservation-info-section">
+          <span>출발날짜시간</span>
+          <span>출발공항</span>
+          <span>도착날짜시간</span>
+          <span>도착공항</span>
+          <span>운항편명 항공사</span>
+          <span>좌석등급</span>
+          <span>남은 좌석 수</span>
+          <span>요금</span>
+        </div>
+
+        <div class="item-section">
+          {% if flights %}
+            {% for flight in flights %}
+            <button class="item" onclick="selectFlight('{{ flight.flight_number }}', '{{ flight.departure_date_time }}', '{{ flight.arrival_date_time }}', '{{ flight.departure_airport }}', '{{ flight.arrival_airport }}', '{{ flight.airline }}', '{{ flight.seat_class }}', '{{ flight.number_of_seats }}', '{{ flight.price }}')">
+              <span>{{ flight.departure_date_time }}</span>
+              <span>
+                {% if flight.departure_airport == 'ICN' %}인천
+                {% elif flight.departure_airport == 'JFK' %}뉴욕
+                {% else %}{{ flight.departure_airport }}{% endif %}
+              </span>
+              <span>{{ flight.arrival_date_time }}</span>
+              <span>
+                {% if flight.arrival_airport == 'ICN' %}인천
+                {% elif flight.arrival_airport == 'JFK' %}뉴욕
+                {% else %}{{ flight.arrival_airport }}{% endif %}
+              </span>
+              <span>{{ flight.flight_number }} {{ flight.airline }}</span>
+              <span>
+                {% if flight.seat_class == 'Business' %}비즈니스
+                {% elif flight.seat_class == 'Economy' %}이코노미
+                {% else %}{{ flight.seat_class }}{% endif %}
+              </span>
+              <span>{{ flight.number_of_seats }}</span>
+              <span>{{ "{:,}".format(flight.price) }}원</span>
+            </button>
+            {% endfor %}
+          {% endif %}
+        </div>
+      </section>
+      <button class="btn-floating" onclick="goBack()">
+        <img src="/static/assets/icons/icon-arrow-left.svg" />
+      </button>
+    </main>
+    <script>
+      // 정렬 기능
+      document.querySelectorAll('.sort-btn').forEach(button => {
+        button.addEventListener('click', () => {
+          const sortType = button.dataset.sort;
+          const isAsc = button.classList.contains('asc');
+          
+          // 모든 버튼에서 asc, desc 클래스 제거
+          document.querySelectorAll('.sort-btn').forEach(btn => {
+            btn.classList.remove('asc', 'desc');
+          });
+
+          // 클릭된 버튼에 새로운 정렬 상태 적용
+          button.classList.add(isAsc ? 'desc' : 'asc');
+          
+          // 항공편 목록 정렬
+          sortFlights(sortType, !isAsc);
+        });
+      });
+
+      // 항공편 정렬 함수
+      function sortFlights(sortType, ascending) {
+        const itemSection = document.querySelector('.item-section');
+        const flights = Array.from(itemSection.querySelectorAll('.item'));
+        
+        flights.sort((a, b) => {
+          let aValue, bValue;
+          
+          if (sortType === 'time') {
+            // 시간순 정렬 (출발시간 기준)
+            aValue = new Date(a.children[0].textContent);
+            bValue = new Date(b.children[0].textContent);
+          } else if (sortType === 'price') {
+            // 요금순 정렬
+            aValue = parseInt(a.children[7].textContent.replace(/[^\d]/g, ''));
+            bValue = parseInt(b.children[7].textContent.replace(/[^\d]/g, ''));
+          }
+          
+          if (ascending) {
+            return aValue > bValue ? 1 : -1;
+          } else {
+            return aValue < bValue ? 1 : -1;
+          }
+        });
+        
+        // 정렬된 항공편들을 다시 DOM에 추가
+        flights.forEach(flight => {
+          itemSection.appendChild(flight);
+        });
+      }
+
+      // 항공편 선택 함수
+      function selectFlight(flightNumber, departureDateTime, arrivalDateTime, departureAirport, arrivalAirport, airline, seatClass, numberOfSeats, price) {
+        // 선택한 항공편 정보를 세션 스토리지에 저장
+        const selectedFlight = {
+          flight_number: flightNumber,
+          departure_date_time: departureDateTime,
+          arrival_date_time: arrivalDateTime,
+          departure_airport: departureAirport,
+          arrival_airport: arrivalAirport,
+          airline: airline,
+          seat_class: seatClass,
+          number_of_seats: parseInt(numberOfSeats),
+          price: parseInt(price)  // 문자열을 숫자로 변환
+        };
+        sessionStorage.setItem('selectedFlight', JSON.stringify(selectedFlight));
+        
+        // 결제 페이지로 이동
+        window.location.href = '/payment';
+      }
+
+      // 뒤로 가기 함수
+      function goBack() {
+        window.history.back();
+      }
+    </script>
+  </body>
+</html>

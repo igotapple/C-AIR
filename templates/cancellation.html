@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="cancellation.css" />
+    <title>C-AIR</title>
+    <!-- index.html - C-AIR 웹사이트 예약 취소 페이지 -->
+  </head>
+
+  <body>
+    <!-- Header Area -->
+    <header>
+      <nav>
+        <div class="main-logo">
+          <img src="/static/assets/logos/logo-main.png" alt="C-AIR Logo" />
+        </div>
+
+        <ul class="nav-menu">
+          <li class="nav-menu-item cta"><a href="{{ url_for('main.search_page') }}">예약</a></li>
+          <li class="nav-menu-item cta"><a href="{{ url_for('main.history_search_page') }}" class="active">예약 내역 조회</a></li>
+          {% if session.user_role == 'admin' %}
+          <li class="nav-menu-item"><a href="{{ url_for('main.statistics_page') }}">통계</a></li>
+          {% endif %}
+          {% if session.user_cno %}
+          <li class="nav-user-info">{{ session.user_name }}님 안녕하세요!</li>
+          <li class="nav-menu-item user"><a href="{{ url_for('api.logout') }}">로그아웃</a></li>
+          {% else %}
+          <li class="nav-menu-item user"><a href="{{ url_for('main.login_page') }}">로그인</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+      <!-- Hero Section -->
+      <section id="hero">
+        <div class="hero-image-wrapper">
+          <img src="images/image-travel.jpg" class="hero-image" alt="Airplane" />
+        </div>
+      </section>
+
+      <!-- Cancellation Section -->
+      <section id="cancellation">
+        <div class="cancellation-title-section">
+          <div class="cancellation-title">운항편 취소</div>
+        </div>
+
+        <div class="info-section">
+          <span>아래의 운항편이 예약 취소하실 운항편이 맞는지 최종 확인해주세요.</span>
+        </div>
+
+        <div class="cancellation-info-section">
+          <span>출발날짜시간</span>
+          <span>출발공항</span>
+          <span>도착날짜시간</span>
+          <span>도착공항</span>
+          <span>운항편명 항공사</span>
+          <span>좌석등급</span>
+          <span>요금</span>
+        </div>
+
+        <div class="item-section">
+          <div class="item">
+            <span>06/11/수 09:00</span>
+            <span>인천</span>
+            <span>06/11/수 11:30</span>
+            <span>나리타</span>
+            <span>KE5741 대한항공</span>
+            <span>비즈니스</span>
+            <span>250,000원</span>
+          </div>
+        </div>
+
+        <div class="cta-section">
+          <button class="btn-cancellation">취소하기</button>
+        </div>
+      </section>
+      <button class="btn-floating">
+        <img src="icons/icon-arrow-left.svg" />
+      </button>
+    </main>
+  </body>
+</html>

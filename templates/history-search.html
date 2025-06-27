@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/history-search.css" />
+    <title>C-AIR</title>
+    <!-- history-search.html - C-AIR 웹사이트 예약 및 취소 내역 조회 페이지 -->
+  </head>
+
+  <body>
+    <!-- Header Area -->
+    <header>
+      <nav>
+        <div class="main-logo">
+          <img src="/static/assets/logos/logo-main.png" alt="C-AIR Logo" />
+        </div>
+
+        <ul class="nav-menu">
+          <li class="nav-menu-item cta"><a href="{{ url_for('main.search_page') }}">예약</a></li>
+          <li class="nav-menu-item cta"><a href="{{ url_for('main.history_search_page') }}" class="active">예약 내역 조회</a></li>
+          {% if session.user_role == 'admin' %}
+          <li class="nav-menu-item"><a href="{{ url_for('main.statistics_page') }}">통계</a></li>
+          {% endif %}
+          {% if session.user_cno %}
+          <li class="nav-user-info">{{ session.user_name }}님 안녕하세요!</li>
+          <li class="nav-menu-item user"><a href="{{ url_for('api.logout') }}">로그아웃</a></li>
+          {% else %}
+          <li class="nav-menu-item user"><a href="{{ url_for('main.login_page') }}">로그인</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+      <!-- Hero Section -->
+      <section id="hero">
+        <div class="hero-image-wrapper">
+          <img src="/static/assets/images/image-travel.jpg" class="hero-image" alt="Airplane" />
+        </div>
+      </section>
+
+      <!-- History Search Section -->
+      <section id="history-search">
+        <div class="history-search-title-section">
+          <div class="history-search-title">예약 및 취소 내역 조회</div>
+        </div>
+
+        {% if not session.user_cno %}
+        <div class="login-required">
+          <p>내역 조회를 위해 로그인이 필요합니다.</p>
+          <a href="{{ url_for('main.login_page') }}" class="btn-login">로그인</a>
+        </div>
+        {% else %}
+        <div class="info-section">
+          <span>조회 기간을 설정하면 예약 및 취소 내역을 확인하실 수 있습니다.</span>
+          <br />
+          <span
+            >출발 시간이 지나지 않은 예약의 운항편명을 클릭하면 예약 취소를 진행하실 수 있습니다.
+          </span>
+        </div>
+
+        <form class="history-search-form" action="{{ url_for('main.history_result_page') }}" method="GET">
+          <div class="btn-history-search">
+            <select name="searchType" class="btn-history-search">
+              <option value="all" {% if request.args.get('searchType') == 'all' %}selected{% endif %}>전체</option>
+              <option value="reservation" {% if request.args.get('searchType') == 'reservation' %}selected{% endif %}>예약</option>
+              <option value="cancellation" {% if request.args.get('searchType') == 'cancellation' %}selected{% endif %}>취소</option>
+            </select>
+          </div>
+          <div class="btn-history-search">
+            <input type="date" name="startDate" class="date" placeholder="시작일 선택" value="{{ request.args.get('startDate', '') }}" />
+          </div>
+          <img src="/static/assets/icons/icon-tilde.svg" class="icon-tilde" />
+          <div class="btn-history-search">
+            <input type="date" name="endDate" class="date" placeholder="종료일 선택" value="{{ request.args.get('endDate', '') }}" />
+          </div>
+          <button type="submit" class="btn-submit">
+            <img src="/static/assets/icons/icon-search.svg" alt="Search Icon" class="search-icon" />
+          </button>
+        </form>
+        {% endif %}
+      </section>
+    </main>
+  </body>
+</html>

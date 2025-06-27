@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/login.css" />
+    <title>C-AIR</title>
+    <!-- login.html - C-AIR 웹사이트 로그인 페이지 -->
+  </head>
+
+  <body>
+    <!-- Header Area -->
+    <header>
+      <nav>
+        <div class="main-logo">
+          <img src="/static/assets/logos/logo-main.png" alt="C-AIR Logo" />
+        </div>
+      </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+      <!-- Login Section -->
+      <section id="login">
+        <div class="login-title">회원 로그인</div>
+
+        {% if error %}
+        <div id="error-popup" class="error-popup">
+          <div class="error-content">
+            <span class="error-message">{{ error }}</span>
+          </div>
+        </div>
+        {% endif %}
+
+        <form class="login-form" action="{{ url_for('api.login') }}" method="POST">
+          <input type="text" name="cno" class="id-input-field" placeholder="회원번호를 입력해주세요" />
+
+          <input type="password" name="password" class="pw-input-field" placeholder="비밀번호를 입력해주세요" />
+
+          <button type="submit" class="btn-login">로그인</button>
+        </form>
+
+        <div class="btn-secondary-section">
+          <button class="btn-find-id">아이디 찾기</button>
+          <button class="btn-find-pw">비밀번호 찾기</button>
+          <button class="btn-signup">회원가입</button>
+        </div>
+      </section>
+    </main>
+    <script>
+      // 에러 팝업 자동 숨김
+      document.addEventListener('DOMContentLoaded', function() {
+        const errorPopup = document.getElementById('error-popup');
+        if (errorPopup) {
+          // 3초 후 자동으로 팝업 숨김
+          setTimeout(function() {
+            closeErrorPopup();
+          }, 3000);
+        }
+      });
+
+      // 에러 팝업 닫기 함수
+      function closeErrorPopup() {
+        const errorPopup = document.getElementById('error-popup');
+        if (errorPopup) {
+          errorPopup.classList.add('hide');
+          // 애니메이션 완료 후 요소 제거
+          setTimeout(function() {
+            errorPopup.remove();
+          }, 300);
+        }
+      }
+    </script>
+  </body>
+</html>

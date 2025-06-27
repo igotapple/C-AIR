@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/payment-complete.css" />
+    <title>C-AIR</title>
+    <!-- payment-complete.html - C-AIR 웹사이트 결제 완료 페이지 -->
+  </head>
+
+  <body data-user-logged-in="{{ 'true' if user_name and user_name != '회원' else 'false' }}" data-user-name="{{ user_name if user_name else '' }}">
+    <!-- Header Area -->
+    <header>
+      <nav>
+        <div class="main-logo">
+          <img src="/static/assets/logos/logo-main.png" alt="C-AIR Logo" />
+        </div>
+
+        <ul class="nav-menu">
+          <li class="nav-menu-item cta"><a href="{{ url_for('main.search_page') }}">예약</a></li>
+          <li class="nav-menu-item cta"><a href="{{ url_for('main.history_search_page') }}" class="active">예약 내역 조회</a></li>
+          {% if session.user_role == 'admin' %}
+          <li class="nav-menu-item"><a href="{{ url_for('main.statistics_page') }}">통계</a></li>
+          {% endif %}
+          {% if session.user_cno %}
+          <li class="nav-user-info">{{ session.user_name }}님 안녕하세요!</li>
+          <li class="nav-menu-item user"><a href="{{ url_for('api.logout') }}">로그아웃</a></li>
+          {% else %}
+          <li class="nav-menu-item user"><a href="{{ url_for('main.login_page') }}">로그인</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </header>
+
+    <!-- Main Content Area -->
+    <main>
+      <!-- Hero Section -->
+      <section id="hero">
+        <div class="hero-image-wrapper">
+          <img src="/static/assets/images/image-travel.jpg" class="hero-image" alt="Airplane" />
+        </div>
+      </section>
+
+      <!-- Payment Complete Section -->
+      <section id="payment-complete">
+        <div class="payment-complete-title-section">
+          <div class="payment-complete-title">운항편 예약 완료</div>
+        </div>
+
+        <div class="info-section">
+          <span>예약 및 결제가 완료되었습니다.</span>
+          <br />
+          <span>귀하의 이메일로 탑승권이 발송되었으니 확인해 주시기 바랍니다.</span>
+          <br />
+          <span>감사합니다. 안전하고 즐거운 여행 되시길 바랍니다.</span>
+        </div>
+
+        <div class="cta-section">
+          <button class="btn-go-home" onclick="goHome()">홈 화면으로 이동</button>
+        </div>
+      </section>
+      <button class="btn-floating" onclick="goBack()">
+        <img src="/static/assets/icons/icon-arrow-left.svg" />
+      </button>
+    </main>
+
+    <script>
+      // 홈 화면으로 이동
+      function goHome() {
+        window.location.href = '/';
+      }
+
+      // 뒤로 가기
+      function goBack() {
+        window.history.back();
+      }
+    </script>
+  </body>
+</html>

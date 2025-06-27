@@ -1,0 +1,276 @@
+:root {
+  --color-black: #333333;
+  --color-gray-more: #a3a3a3;
+  --color-gray: #d9d9d9;
+  --color-orange-main: #f26d4f;
+  --color-white: #ffffff;
+}
+
+body {
+  margin: 0;
+  background: var(--color-white);
+  font-family: Arial, Inter, sans-serif;
+  font-size: 16px;
+  color: var(--color-black);
+}
+
+/*  ====================
+        Header Area 
+    ==================== */
+
+header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  position: sticky;
+}
+
+nav {
+  width: 100%;
+  height: 110px;
+  display: flex;
+  align-items: center;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 100%);
+  box-shadow: 0px 2px 8px rgba(51, 51, 51, 0.2);
+}
+
+.main-logo {
+  width: auto;
+  height: auto;
+  margin-left: 60px;
+}
+
+.nav-menu {
+  width: 100%;
+  height: auto;
+  display: flex;
+  align-items: center;
+  padding-left: 200px;
+  padding-right: 60px;
+  gap: 80px;
+  list-style: none;
+}
+
+.nav-menu-item {
+  font-size: 2.5rem;
+  font-weight: 600;
+}
+
+.nav-menu-item.user {
+  margin-left: auto;
+}
+
+.nav-menu-item a {
+  text-decoration: none;
+  color: var(--color-black);
+  transition: color 0.2s;
+}
+
+.nav-menu-item a:hover {
+  color: var(--color-orange-main);
+}
+
+/*  ====================
+      Main Content Area 
+    ==================== */
+
+main {
+  max-width: 1710px;
+  margin: 0 auto;
+}
+
+.hero-image-wrapper {
+  max-width: 1710px;
+  width: 100%;
+  height: 310px;
+  display: flex;
+  overflow: hidden;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+#reservation {
+  width: 100%;
+  height: 100%;
+  padding: 60px 135px 0 135px;
+  box-sizing: border-box;
+}
+
+.reservation-title-section {
+  width: 100%;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.reservation-title {
+  width: auto;
+  height: auto;
+  font-size: 2.5rem;
+  font-weight: 600;
+  box-sizing: border-box;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.sort-buttons {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.sort-btn {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 9px 8px 16px;
+  background-color: var(--color-white);
+  border: 2px solid var(--color-orange-main);
+  border-radius: 4px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-black);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sort-btn:hover {
+  background-color: var(--color-orange-main);
+  color: var(--color-white);
+}
+
+.sort-btn:hover .sort-icon {
+  filter: brightness(0) invert(1);
+}
+
+.sort-btn.asc,
+.sort-btn.desc {
+  background-color: var(--color-orange-main);
+  color: var(--color-white);
+}
+
+.sort-btn.asc .sort-icon,
+.sort-btn.desc .sort-icon {
+  filter: brightness(0) invert(1);
+}
+
+.sort-icon {
+  width: 24px;
+  height: 24px;
+  transition: transform 0.2s ease;
+}
+
+.sort-btn.asc .sort-icon {
+  transform: rotate(180deg);
+}
+
+.sort-btn.desc .sort-icon {
+  transform: rotate(0deg);
+}
+
+.reservation-info-section {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 48px;
+  margin-bottom: 20px;
+  background: rgba(242, 109, 79, 0.6);
+  border-radius: 4px;
+  box-sizing: border-box;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-white);
+}
+
+.reservation-info-section span {
+  width: 12.5%;
+  text-align: center;
+  word-break: keep-all;
+  padding: 0 10px;
+}
+
+.item-section {
+  width: 100%;
+  height: auto;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding-top: 2px;
+}
+
+.item {
+  width: 100%;
+  height: 100px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 48px;
+  background: var(--color-white);
+  border: 2px solid var(--color-orange-main);
+  border-radius: 4px;
+  box-shadow: 0 4px 4px rgba(242, 109, 79, 0.2);
+  font-size: 1.25rem;
+  color: var(--color-black);
+  box-sizing: border-box;
+  cursor: pointer;
+}
+
+.item:hover {
+  border: 2px solid var(--color-orange-main);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.item span {
+  width: 12.5%;
+  text-align: center;
+  word-break: keep-all;
+  padding: 0 10px;
+}
+
+.item:last-child {
+  margin-bottom: 40px;
+}
+
+.btn-floating {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: none;
+  border-radius: 50%;
+  background-color: var(--color-black);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.btn-floating:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+}
+
+.btn-floating img {
+  width: auto;
+  height: auto;
+}

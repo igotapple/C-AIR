@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/search.css" />
+    <title>C-AIR</title>
+    <!-- index.html - C-AIR 웹사이트 검색 페이지 -->
+  </head>
+
+  <body>
+    <!-- Header Area -->
+    <header>
+      <nav>
+        <div class="main-logo">
+          <img src="/static/assets/logos/logo-main.png" alt="C-AIR Logo" />
+        </div>
+
+        <ul class="nav-menu">
+          <li class="nav-menu-item cta"><a href="{{ url_for('main.search_page') }}">예약</a></li>
+          <li class="nav-menu-item cta"><a href="{{ url_for('main.history_search_page') }}" class="active">예약 내역 조회</a></li>
+          {% if session.user_role == 'admin' %}
+          <li class="nav-menu-item"><a href="{{ url_for('main.statistics_page') }}">통계</a></li>
+          {% endif %}
+          {% if session.user_cno %}
+          <li class="nav-user-info">{{ session.user_name }}님 안녕하세요!</li>
+          <li class="nav-menu-item user"><a href="{{ url_for('api.logout') }}">로그아웃</a></li>
+          {% else %}
+          <li class="nav-menu-item user"><a href="{{ url_for('main.login_page') }}">로그인</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+    </header>
+
+
+    <!-- Main Content Area -->
+    <main>
+      <!-- Hero Section -->
+      <section id="hero">
+        <div class="hero-image-wrapper">
+          <img src="/static/assets/images/image-travel.jpg" class="hero-image" alt="Airplane" />
+        </div>
+      </section>
+
+      <!-- Search Section -->
+      <section id="quick-search">
+        <div class="quick-search-title-section">
+          <div class="quick-search-title">운항편 검색</div>
+        </div>
+
+        <div class="info-section">
+          <span
+            >출발 날짜, 출발 공항, 도착 공항, 좌석 등급을 입력하면 원하는 운항편을 검색하실 수
+            있습니다.</span
+          >
+          <br />
+          <span
+            >운항편명을 클릭하면 상세 정보를 확인하고, 본인의 항공권만을 예약 및 결제를 진행하실 수
+            있습니다.
+          </span>
+        </div>
+
+        {% if error %}
+        <div class="error-popup">
+          <div class="error-content">
+            <span class="error-message">{{ error }}</span>
+          </div>
+        </div>
+        {% endif %}
+
+        <form class="quick-search-form" action="/api/search" method="GET">
+          <div class="btn-quick-search">
+            <input type="date" name="departure_date" class="date" placeholder="출발날짜" required />
+          </div>
+
+          <div class="btn-quick-search">
+            <input type="text" name="departure_airport" class="departure-airport" placeholder="출발공항" required />
+            <img
+              src="/static/assets/icons/icon-flight-takeoff.svg"
+              alt="Departure Airplane Icon"
+              class="input-icon"
+            />
+          </div>
+
+          <div class="btn-quick-search">
+            <input type="text" name="arrival_airport" class="arrival-airport" placeholder="도착공항" required />
+            <img src="/static/assets/icons/icon-flight-land.svg" alt="Arrival Airplane Icon" class="input-icon" />
+          </div>
+
+          <div class="btn-quick-search">
+            <input type="text" name="seat_class" class="seat-class" placeholder="좌석등급" required />
+            <img src="/static/assets/icons/icon-seat.svg" alt="Seat Icon" class="input-icon" />
+          </div>
+
+          <button type="submit" class="btn-submit">
+            <img src="/static/assets/icons/icon-search.svg" alt="Search Icon" class="search-icon" />
+          </button>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
